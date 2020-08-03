@@ -2,6 +2,8 @@ import os
 from flask import Flask
 from mongoengine import *
 import json
+import urllib.parse
+import pymongo
 
 app = Flask(__name__)
 
@@ -10,20 +12,44 @@ app = Flask(__name__)
 if 'VCAP_SERVICES' in os.environ:
     vcap_services = json.loads(os.environ['VCAP_SERVICES'])
     # XXX: avoid hardcoding here
-    mongo_srv = vcap_services['mongodb-2.2'][0]
+    mongo_srv = vcap_services['documentdb'][0]
     cred = mongo_srv['credentials']
-    host = cred['hostname']
-    user = cred['name']
-    pw = cred['password']
-    mongo_url = cred['url']
+    host = cred['INSTANCE_ENDPOINT']
+    user = cred['DB_USERNAME']
+    pw = cred['DB_PASSWORD']
+    port = cred['PORT']
+    #mongodb://{}:{}@{}:{}
+    mongo_url = "mongodb://{}:{}@{}:{}/".format(user,urllib.parse.quote_plus(pw),host,port)
 else:
     host = "localhost"
     user = ""
     pw = ""
     mongo_url = "mongodb://localhost"
 
+# from: https://docs.aws.amazon.com/documentdb/latest/developerguide/connect_programmatically.html
+# #client = pymongo.MongoClient('mongodb://<sample-user>:<password>@sample-cluster.node.us-east-1.docdb.amazonaws.com:27017/?replicaSet=rs0&readPreference=secondaryPreferred') 
+# client = pymongo.MongoClient(mongo_url) 
 
-# create a connection to the MongoDB
+# ##Specify the database to be used
+# db = client.sample_database
+
+# ##Specify the collection to be used
+# col = db.sample_collection
+
+# ##Insert a single document
+# col.insert_one({'hello':'Amazon DocumentDB'})
+
+# ##Find the document that was previously written
+# x = col.find_one({'hello':'Amazon DocumentDB'})
+
+# ##Print the result to the screen
+# print(x)
+
+# ##Close the connection
+# client.close()
+
+# # create a connection to the MongoDB
+# print(mongo_url)
 connection = connect('sophia', host=mongo_url)
 
 class User(Document):

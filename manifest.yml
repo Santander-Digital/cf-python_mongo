@@ -1,0 +1,9 @@
+---
+applications:
+- name: hello-python
+  memory: 256M
+  services:
+    - demotest-mongodb
+  env:
+    APP_ENV: HelloWorld
+    
