@@ -14,14 +14,12 @@ if 'VCAP_SERVICES' in os.environ:
     # XXX: avoid hardcoding here
     mongo_srv = vcap_services['documentdb'][0]
     cred = mongo_srv['credentials']
-    host = cred['INSTANCE_ENDPOINT']
+    host = cred['CLUSTER_ENDPOINT']
     user = cred['DB_USERNAME']
     pw = cred['DB_PASSWORD']
     port = cred['PORT']
     #mongodb://{}:{}@{}:{}
-    
-    mongo_url = "mongodb://{}:{}@{}:{}/".format(user,urllib.parse.quote_plus(pw),host,port)
-    
+    mongo_url = "mongodb://{}:{}@{}:{}/?ssl=true&ssl_ca_certs=resources/rds-combined-ca-bundle.pem&replicaSet=rs0&readPreference=secondaryPreferred&retryWrites=false".format(user,urllib.parse.quote_plus(pw),host,port)
 else:
     host = "localhost"
     user = ""
