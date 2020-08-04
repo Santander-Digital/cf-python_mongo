@@ -19,7 +19,10 @@ if 'VCAP_SERVICES' in os.environ:
     pw = cred['DB_PASSWORD']
     port = cred['PORT']
     #mongodb://{}:{}@{}:{}
-    mongo_url = "mongodb://{}:{}@{}:{}/".format(user,urllib.parse.quote_plus(pw),host,port)
+    
+    #mongo_url = "mongodb://{}:{}@{}:{}/".format(user,urllib.parse.quote_plus(pw),host,port)
+    wget https://s3.amazonaws.com/rds-downloads/rds-combined-ca-bundle.pem
+    mongo_url = "mongodb://master:$pw@dbprimaryinstance-d1pk8y2ioe6o.cdkpseb2ndzl.us-west-2.docdb.amazonaws.com:27017/?ssl=true&ssl_ca_certs=rds-combined-ca-bundle.pem&retryWrites=false"
 else:
     host = "localhost"
     user = ""
